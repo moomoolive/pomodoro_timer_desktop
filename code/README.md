@@ -1,5 +1,8 @@
 # pomdoro_timer
 
+Missing components (relative to web app):
+> 'downloadDesktop' header component and all triggers to render and close component
+
 ## Project setup
 ```
 npm install

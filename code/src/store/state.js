@@ -14,6 +14,5 @@ export default {
     sound: {
         audio: soundsHTML.cuckooClock,
         name: 'cuckooClock'
-    },
-    isElectron: false
+    }
 }

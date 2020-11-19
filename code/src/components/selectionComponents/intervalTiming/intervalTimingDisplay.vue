@@ -98,7 +98,7 @@ export default {
 
 .button {
     position: relative;
-    top: 10%;
+    margin-top: 10%;
     background: gray;
     color: white;
     
