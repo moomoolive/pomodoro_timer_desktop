@@ -1,0 +1,128 @@
+<template>
+    <div>
+        <download-desktop
+        v-if="showDownload"
+        style="position: fixed; z-index: 1"
+        @close="showDownload = false"
+        />
+        <div id="left" v-if="!smallScreen">
+            <button id="button" class="github">
+                <a @click="openNewTab(githubLink)">Contribute to Source Code</a>
+            </button>
+            <button
+            v-if="!isElectron"
+            id="button" 
+            class="desktop"
+            >
+                <a @click="showDownload = true">Desktop App (Soon...)</a>
+            </button>
+            <button id="button" class="feedback">
+                <a @click="openNewTab(feedbackForm)">Submit Your Feedback</a>
+            </button>
+        </div>
+        <div id="right">
+            <selection-button
+            @click.native="$emit('settings')"
+            ref="button"
+            id="right" 
+            icon="fas fa-cog"
+            />
+        </div>
+    </div>
+</template>
+
+<script>
+import selectionButton from "./commonComponents/selectionButton"
+
+export default {
+    name: "Header",
+    components: {
+        selectionButton,
+        downloadDesktop: () => import ("./headerComponents/downloadDesktop.vue")
+    },
+    data() {
+        return {
+            githubLink: "https://github.com/moomoolive/pomdoro_timer",
+            feedbackForm: "https://forms.gle/vC2G9cuPccdH57aW7",
+            isMounted: false,
+            isElectron: false,
+            showDownload: false
+        }
+    },
+    methods: {
+        openNewTab(link) {
+            window.open(link, '_blank')
+        }
+    },
+    computed: {
+        smallScreen() {
+            return this.$store.state.smallScreen
+        },
+        smallScreenIndicator1() {
+            if (this.isMounted) return this.$refs.button.windowHeight
+        },
+        smallScreenIndicator2() {
+            if (this.isMounted) return this.$refs.button.windowWidth
+        }
+    },
+    watch: {
+        smallScreenIndicator1(oldValue, newValue) {
+            const screenLength = 520
+            if (newValue <= screenLength && oldValue > screenLength) {
+                this.$store.dispatch('screenSize', false)
+            }
+            else if (newValue > screenLength && oldValue <= screenLength) {
+                this.$store.dispatch('screenSize', true)
+                this.showDownload = false
+            }
+        },
+        smallScreenIndicator2(oldValue, newValue) {
+            const screenLength = 850
+            if (newValue <= screenLength && oldValue > screenLength) {
+                this.$store.dispatch('screenSize', false)
+            }
+            else if (newValue > screenLength && oldValue <= screenLength) {
+                this.$store.dispatch('screenSize', true)
+                this.showDownload = false
+            }
+        }
+    },
+    mounted() {
+        this.isMounted = true
+        this.isElectron = this.$store.state.isElectron
+    }
+}
+</script>
+
+<style lang="scss" scoped>
+#right {
+    text-align: right;
+    position: relative;
+    bottom: 50%;
+    width: 50%;
+    left: 50%;
+}
+
+#left {
+    text-align: left;
+    width: 60%;
+}
+
+#button {
+    border-radius: 20%;
+    height: 3vh;
+    width: 15vh;
+    font-size: 1vh;
+    font-weight: bold;
+    position: relative;
+    border-style: solid;
+    border-width: 0.1vh;
+    top: 20%;
+    margin-left: 1%;
+    margin-right: 2%;
+    overflow: visible;
+    &.github {background-color: $primaryColor;}
+    &.desktop {background-color: $secondaryColor;}
+    &.feedback {background-color: $tertiaryColor;}
+}
+</style>
