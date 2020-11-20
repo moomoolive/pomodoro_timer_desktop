@@ -2,7 +2,7 @@
 [![forthebadge](https://forthebadge.com/images/badges/open-source.svg)](https://github.com/moomoolive/pomdoro_timer)
 [![forthebadge](https://forthebadge.com/images/badges/built-with-resentment.svg)](https://github.com/moomoolive/pomdoro_timer)
 
-# Pomodoro Timer
+# Desktop Pomodoro Timer
 
 A simple and intuitive pomodoro timer desktop app - built with Vuejs, Bootstrap, Fontawesome, and Electron.
 
