@@ -34,7 +34,7 @@ export default {
     },
     data() {
         return {
-            githubLink: "https://github.com/moomoolive/pomdoro_timer",
+            githubLink: "https://github.com/moomoolive/pomodoro_timer_desktop",
             feedbackForm: "https://forms.gle/vC2G9cuPccdH57aW7",
             isMounted: false,
             showDownload: false
