@@ -12,4 +12,10 @@ If you don't want to use the desktop app, you can use it by visiting: https://po
 
 If you want to help extend the program or request extra features open a pull request or an issue.
 
+## Credits
+
+All icons in this app were taken from fontawesome, here's a link to the [license](https://fontawesome.com/license/free).
+
+App icon was taken from iconarchive.com .
+
 A big thank you to Ashfaq Ahmed for his 'CSS Percentage Circle' [blog post](https://codeconvey.com/css-percentage-circle/). It served as the main inspiration for the percentage circle I have in the app.
