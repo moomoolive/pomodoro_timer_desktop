@@ -2,17 +2,18 @@
     <div class="buttonContainer">
         <selection-button
         ref="button"
-        icon="fas fa-coffee"
+        icon="coffee"
         color="green"
+        id="shortBreak"
         @click.native="changeInterval('shortBreak')"
         />
         <selection-button
-        icon="fas fa-briefcase"
+        icon="briefcase"
         color="purple"
         @click.native="changeInterval('workInterval')"
         />
         <selection-button
-        icon="fas fa-bed"
+        :icon="icon1"
         color="brown"
         @click.native="changeInterval('longBreak')"
         />
@@ -29,11 +30,12 @@ export default {
     },
     data() {
         return {
+            icon1: 'bed'
         }
     },
     methods: {
         changeInterval(interval) {
-            this.$emit('change-interval', interval)
+            this.$store.dispatch('changeInterval', interval)
         }
     }
 }

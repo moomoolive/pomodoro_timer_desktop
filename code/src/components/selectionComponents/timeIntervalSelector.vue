@@ -1,5 +1,5 @@
 <template>
-    <div :class="'selector ' + selectorColor">
+    <div :class="'selector ' + selectorColor" id="container">
         <div style="grid-row: 1; grid-column: 1;">
             <div style="height: 40%;">
                 <interval-button buttonNumber="11" />
@@ -16,7 +16,7 @@
                 <interval-button buttonNumber="1" />
             </div>
             <div style="height: 40%;">
-                <p class="selectorMessage">{{ selectorMessage }}</p>
+                <p class="selectorMessage" id="message">{{ selectorMessage }}</p>
             </div>
         </div>
         <div style="grid-row: 1; grid-column: 3;">
@@ -33,7 +33,7 @@
             </div>
         </div>
         <div class="middleGrid">
-            <selection-button icon="fas fa-play" @click.native="play" />
+            <selection-button id="playButton" icon="play" @click.native="play" />
         </div>
         <div style="grid-row: 2; grid-column: 3;">
             <div style="height: 40%;">
@@ -85,7 +85,7 @@ export default {
     },
     methods: {
         play() {
-            this.$emit('play')
+            this.$router.push('/timer')
         }
     },
     computed: {

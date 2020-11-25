@@ -1,24 +1,32 @@
 <template>
-    <div>
-        <download-desktop
-        v-if="showDownload"
-        style="position: fixed; z-index: 1"
-        @close="showDownload = false"
+    <div style="height: 7%; position: relative; z-index: 1;">
+        <pop-up
+        v-if="showSettingsMenu"
+        contents='settings'
+        @submit="showSettingsMenu = false"
         />
         <div id="left" v-if="!smallScreen">
-            <button id="button" class="github">
-                <a @click="openNewTab(githubLink)">Contribute to Source Code</a>
+            <button
+            id="buttonGit"
+            class="button github"
+            @click="openNewTab(githubLink)"
+            >
+                Contribute to Source Code
             </button>
-            <button id="button" class="feedback">
-                <a @click="openNewTab(feedbackForm)">Submit Your Feedback</a>
+            <button
+            id="buttonFeedback"
+            class="button feedback"
+            @click="openNewTab(feedbackForm)"
+            >
+                Submit Your Feedback
             </button>
         </div>
         <div id="right">
             <selection-button
-            @click.native="$emit('settings')"
+            @click.native="showSettingsMenu = true"
             ref="button"
-            id="right" 
-            icon="fas fa-cog"
+            id="settingsButton" 
+            icon="cog"
             />
         </div>
     </div>
@@ -30,14 +38,15 @@ import selectionButton from "./commonComponents/selectionButton"
 export default {
     name: "Header",
     components: {
-        selectionButton
+        selectionButton,
+        popUp: () => import('../components/commonComponents/popUp.vue')
     },
     data() {
         return {
-            githubLink: "https://github.com/moomoolive/pomodoro_timer_desktop",
+            githubLink: "https://github.com/moomoolive/pomodoro_timer",
             feedbackForm: "https://forms.gle/vC2G9cuPccdH57aW7",
             isMounted: false,
-            showDownload: false
+            showSettingsMenu: false
         }
     },
     methods: {
@@ -98,7 +107,7 @@ export default {
     width: 60%;
 }
 
-#button {
+.button {
     border-radius: 20%;
     height: 3vh;
     width: 15vh;

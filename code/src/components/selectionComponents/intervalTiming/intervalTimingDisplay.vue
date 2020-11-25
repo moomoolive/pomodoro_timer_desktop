@@ -12,10 +12,10 @@
         </div>
         <div id="longBreak">
             <p class="text description">Long Break:</p>
-            <p class="text">{{ longBreak }}</p>
+            <p class="text" id="longBreakText">{{ longBreak }}</p>
             <p class="text description">Mins</p>
         </div>
-        <button @click="onClick" class="button">Set As Default</button>
+        <button @click="onClick" class="button" id="default">Set As Default</button>
     </div>
 </template>
 
@@ -27,8 +27,7 @@ export default {
             const defaultIntervals = {
                 shortBreak: this.shortBreak,
                 workInterval: this.workInterval,
-                longBreak: this.longBreak,
-                workSessions: this.workSessions
+                longBreak: this.longBreak
             }
             localStorage.setItem('default', JSON.stringify(defaultIntervals))
         }
@@ -42,9 +41,6 @@ export default {
         },
         longBreak() {
             return this.$store.state.timeIntervals.longBreak
-        },
-        workSessions() {
-            return this.$store.state.timeIntervals.workSessions
         }
     }
 }
@@ -98,7 +94,7 @@ export default {
 
 .button {
     position: relative;
-    margin-top: 10%;
+    top: 10%;
     background: gray;
     color: white;
     

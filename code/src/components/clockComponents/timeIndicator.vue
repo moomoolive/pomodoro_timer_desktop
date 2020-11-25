@@ -1,29 +1,31 @@
 <template>
-    <div :class="'timeDisplay ' + backgroundColor">
+    <div :class="'timeDisplay ' + nextInterval">
         <div
-        class="innerCircle one"
-        :style="`transform: rotate(${fill1.degrees}deg);`"
+        class="innerCircle left"
+        :style="`transform: rotate(${fillLeft.degrees}deg);`"
         >
             <div
-            :class="'fill one ' + fill1.color"
+            :class="'fill left ' + fillLeft.color"
             ></div>
         </div>
         <div
-        class="innerCircle two"
-        :style="`transform: rotate(${fill2.degrees}deg);`"
+        class="innerCircle right"
+        :style="`transform: rotate(${fillRight.degrees}deg);`"
         >
             <div
-            :class="'fill two ' + fill2.color"
+            :class="'fill right ' + fillRight.color"
             ></div>
         </div>
         <div class="lining">
         </div>
         <div class="container">
             <div class="icon">
-                <i :class="icon" style="color: white;"></i>
+                <img
+                :src="iconSrc"
+                >
             </div>
             <div class="timer">
-                {{ this.time.minutes }} : {{ seconds }}
+                {{ this.time.minutes }} : <span id="timerSecs">{{ seconds }}</span>
             </div>
         </div>
     </div>
@@ -34,21 +36,21 @@ export default {
     name: "timeIndicator",
     data() {
         return {
-            backgroundColor: '',
             icon: '',
             lifeCycleSignals: {
                 isMounted: false,
                 isDestroyed: false
             },
             time: {
-                stopWatch: 0,
-                originalTime: 0
+                originalTime: 0,
+                minutes: 0,
+                stopWatch: 0
             },
-            fill1: {
+            fillLeft: {
                 color: '',
                 degrees: 0
             },
-            fill2: {
+            fillRight: {
                 color: '',
                 degrees: 0
             }
@@ -56,8 +58,9 @@ export default {
     },
     methods: {
         countDown() {
+            const oneSecond = 1_000
             const x = setInterval(() => {
-                if (this.appMode === 'selection' || !this.isPlaying || this.lifeCycleSignals.isDestroyed) {
+                if ( !this.isPlaying || this.lifeCycleSignals.isDestroyed) {
                     clearInterval(x)
                     return
                 }
@@ -68,30 +71,43 @@ export default {
                 }
                 else if (this.time.minutes === 0 && this.seconds === '00') {
                     this.$emit('timer-finished', 'timeFinished')
+                    this.$store.dispatch('changeInterval', this.nextInterval)
                     clearInterval(x)
+                    if (this.nextInterval === 'workInterval') this.incrementSession(1)
                 } else {
                     this.time.stopWatch++
                     document.title = `(${this.time.minutes}:${this.seconds}) Pomodoro Timer`
                 }
-            }, 1000)
+            }, oneSecond)
+        },
+        incrementSession(number) {
+            this.$store.dispatch('updateCurrentSession', number) 
         }
     },
     computed: {
         isPlaying() {
             if (this.lifeCycleSignals.isMounted) return this.$parent.play
         },
-        appMode() {
-        return this.$store.state.mode
-        },
         fillMover() {
-            const totalTime = this.time.originalTime * 60
+            const secondsPerMinute = 60
+            const totalTime = this.time.originalTime * secondsPerMinute
             const elapsedTimePercent = this.time.stopWatch/totalTime
-            return Math.ceil(elapsedTimePercent*10_000)/10_000
+            const elapsedTimePercentRounded = Math.ceil(elapsedTimePercent * 10_000)/10_000
+            return elapsedTimePercentRounded
         },
         seconds() {
             const secs = this.time.stopWatch - ((this.time.originalTime - this.time.minutes - 1) * 60)
             const x = secs + 1 > 51? `0${60 - secs}` : `${60 - secs}`
             return x === '60' ? '00' : x 
+        },
+        iconSrc() {
+            return require(`../../assets/icons/${this.icon}.svg`)
+        },
+        nextInterval() {
+            return this.$store.getters.nextInterval
+        },
+        currentInterval() {
+            return this.$store.state.timeIntervalSelect
         }
     },
     watch: {
@@ -99,17 +115,20 @@ export default {
             this.countDown()
         },
         fillMover() {
-            if (this.fillMover >= 0.4_999) {
-                this.fill2.degrees = 0
-                this.fill2.color = this.backgroundColor
+            const fiftyPercent = 0.4_999
+            const oneHundredPercent = 0.9_999
+            const totalDegreesOfRotation = 360
+            if (this.fillMover >= fiftyPercent) {
+                this.fillRight.degrees = 0
+                this.fillRight.color = this.nextInterval
 
-                this.fill1.degrees = (this.fillMover - 0.5) * 360
-            } 
-            else if (this.fillMover >= 0.9_999) {
-                this.fill1.degrees = 0
-                this.fill1.color = this.backgroundColor
+                this.fillLeft.degrees = (this.fillMover - fiftyPercent) * totalDegreesOfRotation
+            }
+            else if (this.fillMover >= oneHundredPercent) {
+                this.fillLeft.degrees = 0
+                this.fillLeft.color = this.nextInterval
             } else {
-                this.fill2.degrees = (this.fillMover * 360)
+                this.fillRight.degrees = (this.fillMover * totalDegreesOfRotation)
             }
         } 
     },
@@ -119,19 +138,16 @@ export default {
         this.time.minutes = this.time.originalTime = times[currentInterval]
         switch(currentInterval) {
                 case 'workInterval':
-                    this.icon = 'fas fa-briefcase'
-                    this.backgroundColor = 'shortBreak'
-                    this.fill1.color = this.fill2.color = 'workInterval'
+                    this.icon = 'briefcase'
+                    this.fillLeft.color = this.fillRight.color = 'workInterval'
                     break
                 case 'shortBreak':
-                    this.icon = "fas fa-coffee"
-                    this.backgroundColor = 'workInterval'
-                    this.fill1.color = this.fill2.color = 'shortBreak'
+                    this.icon = "coffee"
+                    this.fillLeft.color = this.fillRight.color = 'shortBreak'
                     break
                 case 'longBreak':
-                    this.icon = "fas fa-bed"
-                    this.backgroundColor = 'workInterval'
-                    this.fill1.color = this.fill2.color = 'longBreak'
+                    this.icon = "bed"
+                    this.fillLeft.color = this.fillRight.color = 'longBreak'
                     break 
         }
     },
@@ -169,11 +185,11 @@ export default {
     position: relative;
     z-index: 1;
     animation: ease-in-out 1s;
-    &.one {
+    &.left {
         float: left;
         transform-origin: 100%  50%;
     }
-    &.two {
+    &.right {
         float: right;
         transform-origin: 1% 48.9%;
     }
@@ -186,7 +202,7 @@ export default {
     z-index: 1;
     border-style: none;
     border-width: 0.1vh;
-    &.two {
+    &.right {
         right: 0%;
     }
 }
@@ -219,8 +235,10 @@ export default {
 
 .icon {
     position: relative;
+    margin-left: auto;
+    margin-right: auto;
     top: 40%;
-    text-align: center;
-    font-size: 10vh;
+    height: 10vh;
+    width: 10vh
 }
 </style>

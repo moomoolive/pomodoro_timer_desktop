@@ -3,7 +3,7 @@
         <div class="settingsMenu">
             <div style="height: 10%; width: 98%; text-align: right;">
                 <selection-button
-                icon="fas fa-times"
+                icon="close"
                 color="purple"
                 @click.native="onSubmit"
                 />
@@ -19,6 +19,7 @@
             <button
             @click="onSubmit('settings')"
             class="button"
+            id="submit"
             >
                 <p style="font-size: 1.5vh;">Submit</p>
             </button>
@@ -44,14 +45,12 @@ export default {
     methods: {
         onSubmit(value) {
             this.$emit('submit')
-            if (value === 'settings') {
-                const payload = {
-                    name: this.sound,
-                    audio: this.soundFiles[this.sound]
-                }
-                localStorage.setItem('sound', JSON.stringify(this.sound))
-                this.$store.dispatch('changeSound', payload)
+            const payload = {
+                name: this.sound,
+                audio: this.soundFiles[this.sound]
             }
+            localStorage.setItem('sound', JSON.stringify(this.sound))
+            this.$store.dispatch('changeSound', payload)
         }
     },
     watch: {

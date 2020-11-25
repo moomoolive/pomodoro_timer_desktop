@@ -3,14 +3,16 @@
         <selection-button
         :icon="leftIcon"
         :color="leftButtonColor"
-        @click.native="nextInterval"
+        @click.native="changeInterval"
+        id="nextIntervalButton"
         />
         <selection-button
         :icon="middleIcon"
         @click.native="pausePlay"
+        id="playButton"
         />
         <selection-button
-        icon="fas fa-stop"
+        icon="stop"
         color="brown"
         @click.native="toSelection"
         />
@@ -27,40 +29,60 @@ export default {
     },
     data() {
         return {
-            leftIcon: '',
-            middleIcon: '',
-            leftButtonColor: ''
+            leftIcon: 'coffee',
+            leftButtonColor: 'green',
+            isMounted: false
         }
     },
     methods: {
-        nextInterval(interval) {
+        changeInterval(interval) {
+            if (this.nextInterval === 'workInterval') this.incrementSession(1)
+            this.$store.dispatch('changeInterval', this.nextInterval)
+            this.leftButton()
             this.$emit('rerender', 'changeInterval')
         },
         pausePlay() {
             this.$emit('rerender', 'pause/play')
         },
         toSelection() {
-            this.$emit('rerender', 'stop')
+            this.$router.push('/')
+        },
+        leftButton() {
+            switch(this.nextInterval) {
+                case 'longBreak':
+                    this.leftIcon = "bed"
+                    this.leftButtonColor = 'brown'
+                    break
+                case 'shortBreak':
+                    this.leftIcon = 'coffee'
+                    this.leftButtonColor = 'green'
+                    break
+                case 'workInterval':
+                    this.leftIcon = 'briefcase'
+                    this.leftButtonColor = 'purple'
+                    break
+            }
+        },
+        incrementSession(number) {
+            this.$store.dispatch('updateCurrentSession', number) 
         }
     },
-    created() {
-        this.$parent.play? this.middleIcon = "fas fa-pause": this.middleIcon = "fas fa-play"
-        switch(this.$store.state.timeIntervalSelect) {
-            case 'workInterval':
-                if (this.$store.getters.isLastSession) {
-                    this.leftIcon = "fas fa-bed"
-                    this.leftButtonColor = 'brown'
-                } else {
-                    this.leftIcon = 'fas fa-coffee'
-                    this.leftButtonColor = 'green'
-                }
-                break
-            case 'longBreak':
-            case 'shortBreak':
-                this.leftIcon = 'fas fa-briefcase'
-                this.leftButtonColor = 'purple'
-                break
+    computed: {
+        isLastSession() {
+            return this.$store.getters.isLastSession
+        },
+        nextInterval() {
+            return this.$store.getters.nextInterval
+        },
+        currentInterval() {
+            return this.$store.state.timeIntervalSelect
+        },
+        middleIcon() {
+            if (this.isMounted) return this.$parent.play? 'pause' : 'play'
         }
+    },
+    mounted() {
+        this.isMounted = true
     }
 }
 </script>

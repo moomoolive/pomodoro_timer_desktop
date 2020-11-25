@@ -8,7 +8,6 @@ export default {
         workSessions: 4,
         currentSession: 1
     },
-    mode: 'selection',
     timeIntervalSelect: 'workInterval',
     smallScreen: false,
     sound: {

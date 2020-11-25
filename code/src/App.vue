@@ -1,40 +1,17 @@
 <template>
   <div class="appContainer" id="app">
-    <pop-up
-    v-if="settingsMenu"
-    contents='settings'
-    @submit="settingsMenu = false"
-    />
-    <div style="height: 7%;">
-      <Header @settings="settingsMenu = true" />
-    </div>
-    <div v-if="showSelection">
-      <selection />
-    </div>
-    <div v-if="showClock" >
-      <clock />
-    </div>
+    <Header />
+    <router-view />
   </div>
 </template>
 
 <script>
 import Header from './components/Header.vue'
-import selection from './components/selection.vue'
 import soundsHTML from './components/commonComponents/sounds.js'
 
 export default {
   components: {
-    Header,
-    selection,
-    clock: () => import('./components/clock.vue'),
-    popUp: () => import('./components/commonComponents/popUp.vue')
-  },
-  data() {
-    return {
-      showSelection: true,
-      showClock: false,
-      settingsMenu: false
-    }
+    Header
   },
   methods: {
     getUserSettings() {
@@ -52,23 +29,6 @@ export default {
     checkSmallScreen() {
       if (window.innerHeight <= 520 || window.innerWidth <= 850) {
         this.$store.dispatch('screenSize', true)
-      }
-    }
-  },
-  computed: {
-    appMode() {
-        return this.$store.state.mode
-      }
-  },
-  watch: {
-    appMode() {
-      if (this.appMode === 'selection') {
-        this.showClock = false
-        this.showSelection = true
-      }
-      else if (this.appMode === 'clock') {
-        this.showSelection = false
-        this.showClock = true
       }
     }
   },

@@ -26,7 +26,7 @@ export default {
     },
     methods: {
         roundUp(value) {
-            return Math.round(this.scaleFactor * value)
+            return Math.round(this.scaleFactor * parseInt(value))
         },
         updateTimeInterval(timeValue) {
             const payload = {

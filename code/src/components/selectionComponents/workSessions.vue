@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <selection-button
-        icon="fas fa-minus"
+        icon="minus"
         color="brown"
         id="minusButton"
         @click.native="incrementWorkSessions(-1)"
@@ -12,7 +12,7 @@
             </p>`
         </div>
         <selection-button
-        icon="fas fa-plus"
+        icon="plus"
         color="brown"
         id="addButton"
         @click.native="incrementWorkSessions(1)"
@@ -30,7 +30,15 @@ export default {
     },
     methods:{
         incrementWorkSessions(number) {
-            this.$emit('increment-sessions', number)
+            if (this.display - 1 <= 1 && number === -1) {
+                alert(`You cannot have less than 2 work sessions!`)
+            } 
+            else if (this.display + 1 >= 11 && number === 1) {
+                alert(`You cannot have more than 10 work sessions!`)
+            }
+            else {
+                this.$store.dispatch('incrementSesssionNumber', number)
+            }
         }
     },
     computed: {

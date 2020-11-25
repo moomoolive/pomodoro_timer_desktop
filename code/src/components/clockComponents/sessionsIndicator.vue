@@ -4,6 +4,7 @@
         v-for="x in workSessions"
         :key="x"
         :class="'indicator ' + classType(x)"
+        :id="'indicator'+ x"
         >
         </div>
     </div>
@@ -30,6 +31,13 @@ export default {
         },
         currentSession() {
             return this.$store.state.timeIntervals.currentSession
+        }
+    },
+    watch: {
+        currentSession(newValue, oldValue) {
+            if (newValue > this.workSessions) {
+                this.$store.dispatch('updateCurrentSession', - this.$store.state.timeIntervals.currentSession + 1)
+            }
         }
     }
 }
